@@ -1,5 +1,6 @@
 from game_board import game_board_row, separation
 import random
+from winning_condition import win_conditions
 
 
 def pick_position():
@@ -99,26 +100,42 @@ def computer_draw(position):
     return row_1, row_2, row_3, occupied_position_computer
 
 
-def check_win():
+def check_win(win_conditions, placement, player):
+    win = 0
+    for condition in win_conditions:
+        for spot in condition:
+            if spot is in placement:
+                win += 1
+        if win == 3:
+            print(f"{player} Win")
+            return False
+        elif win < 3:
+            return True
 
 
 occupied_position = []
 occupied_position_computer = []
+game_is_on = True
 row_1 = game_board_row.copy()
 row_2 = game_board_row.copy()
 row_3 = game_board_row.copy()
 
-while True:
+while game_is_on:
     repeated = True
+    print(occupied_position_computer)
+    print(occupied_position)
     pick_position()
     display_gameboard()
-    while repeated:
+    game_is_on = check_win(win_conditions, occupied_position, "Player")
+    while repeated and game_is_on:
         picked_position_by_computer = computer_pick()
         if picked_position_by_computer not in occupied_position:
             if picked_position_by_computer not in occupied_position_computer:
                 computer_draw(picked_position_by_computer)
                 occupied_position_computer.append(picked_position_by_computer)
                 repeated = False
+                game_is_on = check_win(win_conditions, occupied_position_computer, "Computer")
+
     display_gameboard()
 
 
